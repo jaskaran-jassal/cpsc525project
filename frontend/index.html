@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CourseGradePro – Grade Calculator</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>CourseGradePro</h1>
+    <p class="subtitle">Simple course grade calculator</p>
+  </header>
+
+  <main class="container">
+    <!-- LEFT: Course + Assignment form -->
+    <section class="left-panel">
+      <!-- Course selector -->
+      <div class="card">
+        <h2>Select Course</h2>
+        <div class="field-row">
+          <select id="course-select"></select>
+          <button id="new-course-btn">+ New Course</button>
+        </div>
+      </div>
+
+      <!-- Add assignment form -->
+      <div class="card">
+        <h2>Add Assignment</h2>
+        <form id="assignment-form">
+          <div class="field">
+            <label for="assign-name">Assignment Name</label>
+            <input id="assign-name" required />
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="assign-score">Score</label>
+              <input id="assign-score" type="number" required />
+            </div>
+            <div class="field">
+              <label for="assign-max">Max Score</label>
+              <input id="assign-max" type="number" required />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="assign-weight">Weight (%)</label>
+            <input id="assign-weight" type="number" required />
+          </div>
+
+          <button type="submit">Add Assignment</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- RIGHT: Assignments table + final grade -->
+    <section class="right-panel">
+      <div class="card">
+        <h2>Assignments</h2>
+        <table id="assignments-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Score</th>
+              <th>Max</th>
+              <th>Weight (%)</th>
+            </tr>
+          </thead>
+          <tbody id="assignments-body">
+            <!-- Filled by JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card grade-summary">
+        <h2>Final Grade</h2>
+        <p id="grade-number">--%</p>
+        <p id="grade-letter">Select a course to calculate</p>
+        <button id="calc-grade-btn">Recalculate</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Simple new-course modal (hidden by default) -->
+  <div id="course-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Create New Course</h2>
+      <form id="course-form">
+        <div class="field">
+          <label for="course-name">Course Name</label>
+          <input id="course-name" required />
+        </div>
+        <div class="field">
+          <label for="course-code">Course Code</label>
+          <input id="course-code" required />
+        </div>
+        <div class="modal-actions">
+          <button type="button" id="course-cancel">Cancel</button>
+          <button type="submit">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
