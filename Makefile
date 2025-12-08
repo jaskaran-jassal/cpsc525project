@@ -17,7 +17,7 @@ exploit:
 	@make stop-backend
 	@echo "[*] Exploit complete."
 
-# Helper to start backend manually (not needed normally)
+# Helper to start backend manually 
 run-backend:
 	cd $(BACKEND_DIR) && $(NODE) $(BACKEND_ENTRY)
 

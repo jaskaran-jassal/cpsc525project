@@ -1,13 +1,10 @@
-// frontend/js/app.js
 
-// Base API URL (Linux backend)
 const API_BASE = "http://localhost:3000/api";
 
 let courses = [];
 let assignmentsByCourse = {};
 let currentCourseId = null;
 
-// DOM elements
 const courseSelect = document.getElementById("course-select");
 const newCourseBtn = document.getElementById("new-course-btn");
 const assignmentForm = document.getElementById("assignment-form");
@@ -20,9 +17,6 @@ const modal = document.getElementById("course-modal");
 const courseForm = document.getElementById("course-form");
 const courseCancelBtn = document.getElementById("course-cancel");
 
-// -----------------------------------------------------
-// API HELPERS
-// -----------------------------------------------------
 
 // Load all courses
 async function loadCourses() {
@@ -36,15 +30,12 @@ async function loadAssignments(courseId) {
   assignmentsByCourse[courseId] = await res.json();
 }
 
-// Load FINAL GRADE from VULNERABLE backend route
+// Load fina grade from vulnerable backend route
 async function loadFinalGrade(courseId) {
   const res = await fetch(`${API_BASE}/final-grade/${courseId}`);
   return await res.json();
 }
 
-// -----------------------------------------------------
-// INITIALIZATION
-// -----------------------------------------------------
 (async function initialize() {
   await loadCourses();
 
@@ -58,9 +49,6 @@ async function loadFinalGrade(courseId) {
   await updateDisplayedGrade();
 })();
 
-// -----------------------------------------------------
-// RENDER FUNCTIONS
-// -----------------------------------------------------
 
 function renderCourseOptions() {
   courseSelect.innerHTML = "";
@@ -90,9 +78,7 @@ function renderAssignments() {
   }
 }
 
-// -----------------------------------------------------
-// FINAL GRADE DISPLAY (USES VULNERABLE BACKEND)
-// -----------------------------------------------------
+// FINAL GRADE DISPLAY
 async function updateDisplayedGrade() {
   if (!currentCourseId) {
     gradeNumberEl.textContent = "--%";
@@ -115,9 +101,6 @@ async function updateDisplayedGrade() {
   }
 }
 
-// -----------------------------------------------------
-// EVENT LISTENERS
-// -----------------------------------------------------
 
 // Change course
 courseSelect.addEventListener("change", async () => {
@@ -138,7 +121,7 @@ courseCancelBtn.addEventListener("click", () => {
   courseForm.reset();
 });
 
-// SUBMIT NEW COURSE → BACKEND
+// SUBMIT NEW COURSE in BACKEND
 courseForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -164,7 +147,7 @@ courseForm.addEventListener("submit", async (e) => {
   courseForm.reset();
 });
 
-// ADD ASSIGNMENT → BACKEND
+// ADD ASSIGNMENT in BACKEND
 assignmentForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 

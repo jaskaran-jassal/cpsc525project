@@ -1,20 +1,17 @@
-// backend/routes/finalgrade.js
 const express = require("express");
 const db = require("../db");
 
 const router = express.Router();
 
-// Helper: force to 32-bit signed integer (vulnerability)
 function toInt32(x) {
-  return x | 0;
+  return x | 0; // <- Vulnerability
 }
 
-// GET /api/courses/:id/final-grade
 router.get("/:courseId", (req, res) => {
   const { courseId } = req.params;
 
   db.all(
-    `SELECT * FROM assignments WHERE course_id = ?`,
+    `SELECT name, score, max_score, weight FROM assignments WHERE course_id = ?`,
     [courseId],
     (err, rows) => {
       if (err) return res.status(500).json({ error: err.message });
@@ -23,46 +20,41 @@ router.get("/:courseId", (req, res) => {
         return res.json({
           finalPercentage: 0,
           letter: "N/A",
-          warning: "No assignments found"
+          warning: "No assignments found",
         });
       }
 
-      // -------------------------------
-      // Vulnerability #1: Integer Overflow
-      // -------------------------------
-      let totalScore = 0;
+      let totalWeighted = 0;
+      let totalWeight = 0;
 
       for (const a of rows) {
-        // Each score forced into 32-bit integer
-        const s = toInt32(a.score);
-        totalScore = toInt32(totalScore + s); // Overflow happens here
+        const scorePct = a.score / a.max_score; // percent earned
+        const weighted = scorePct * a.weight;   // contribution
+
+        // -------------------------------------------------------------
+        // VULNERABLE OPERATION:
+        // These accumulations are forced through 32-bit integer casting.
+        // We can send very large values -> overflow corrupts grade.
+        // -------------------------------------------------------------
+        totalWeighted = toInt32(totalWeighted + weighted); // overflow risk
+        totalWeight   = toInt32(totalWeight + a.weight);   // overflow risk
       }
 
-      // -------------------------------
-      // Vulnerability #2: Wrong Weighted Average Formula
-      // -------------------------------
-      const n = rows.length;
+      // Normalize (overflowed values produce corrupted percentage)
+      const finalPercentage = (totalWeighted / totalWeight) * 100;
 
-      // WRONG formula on purpose:
-      // Instead of doing (score/max)*weight
-      // we divide totalScore by n*100, then multiply
-      const finalPercentage = (totalScore / (n * 100)) * 100;
-
-      // Clamp percentage to look “normal”
-      const pct = Math.max(-9999, Math.min(9999, finalPercentage));
-
-      // Convert to letter grade
+      // Determine letter grade
       let letter = "F";
-      if (pct >= 90) letter = "A";
-      else if (pct >= 80) letter = "B";
-      else if (pct >= 70) letter = "C";
-      else if (pct >= 60) letter = "D";
+      if (finalPercentage >= 90) letter = "A";
+      else if (finalPercentage >= 80) letter = "B";
+      else if (finalPercentage >= 70) letter = "C";
+      else if (finalPercentage >= 60) letter = "D";
 
       return res.json({
-        finalPercentage: pct,
+        finalPercentage,
         letter,
         vulnerabilityNote:
-          "This calculation is intentionally incorrect (CWE-682)."
+          "Using integer overflow for showing CWE-682 vulnerability.",
       });
     }
   );
