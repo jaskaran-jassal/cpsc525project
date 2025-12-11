@@ -31,7 +31,7 @@ as sqllite lib is only avaiable on linux server
 - `courses(id, name, code)`
 - `assignments(id, course_id, name, score, max_score, weight)`
 
-# 🛑 Implemented Vulnerability (CWE-682)
+# Implemented Vulnerability (CWE-682)
 
 ## 1. Integer Overflow
 All score arithmetic is forced into **32-bit signed integers**:
@@ -43,7 +43,7 @@ function toInt32(x) {
 ```
 
 Large inputs like 2147483647 wrap around and corrupt the total score due to overflow.
-# 🚀 How to Run the Application
+# How to Run the Application
 
 Everything runs on the **Linux server**.  
 We can run **frontend**, **backend**, and **exploit** separately or automatically using the Makefile.
@@ -59,6 +59,7 @@ npm install axios
 
 ## **2. Start the Backend**
 ```
+cd project
 cd backend
 node server.js
 ```
@@ -74,6 +75,7 @@ http://localhost:3000
 Open new terminal:
 
 ```
+cd project
 cd frontend
 python3 -m http.server 8080
 ```
@@ -87,7 +89,7 @@ Use the UI to add:
 - Courses
 - Assignments
 - View vulnerable final grade
-# 🧨 **4. Run the Exploit Automatically (Makefile)**
+# **4. Run the Exploit Automatically (Makefile)**
 
 The Makefile automates the entire attack demonstration.
 
@@ -122,3 +124,8 @@ like adding `2147483647` wraps into negative space.
 
 This prevents values from overflowing and ensures accurate numeric operations.
  
+# How to Run the Exploit
+- included a make file in project folder 
+- just need to run "make exploit" 
+- the above comamnd will run the exploit and give the results on cmd as well the GUI 
+- to view the results on GUI just look for that course added in the exploit file
